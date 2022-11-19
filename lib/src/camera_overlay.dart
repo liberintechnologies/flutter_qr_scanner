@@ -34,8 +34,8 @@ class CameraOverlay extends CustomPainter {
     );
 
     final paint2 = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 2
+      ..color = Colors.black54
+      ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
     canvas.drawRRect(

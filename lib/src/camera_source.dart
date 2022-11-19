@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_scanner/src/camera_overlay.dart';
+import 'package:qr_scanner/src/camera_overlay_animator.dart';
 
 class CameraSource extends StatefulWidget {
   const CameraSource({Key? key}) : super(key: key);
@@ -10,8 +11,9 @@ class CameraSource extends StatefulWidget {
 }
 
 class _CameraSourceState extends State<CameraSource>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   CameraController? _cameraController;
+  AnimationController? _animationController;
 
   bool _isCameraInitialized = false;
 
@@ -19,6 +21,17 @@ class _CameraSourceState extends State<CameraSource>
   void initState() {
     findBackCamera();
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+    );
+    _startAnimation();
+  }
+
+  void _startAnimation() {
+    _animationController!
+      ..stop()
+      ..reset()
+      ..repeat(period: const Duration(seconds: 3));
   }
 
   void findBackCamera() async {
@@ -86,6 +99,8 @@ class _CameraSourceState extends State<CameraSource>
                 _cameraController!,
                 child: CustomPaint(
                   painter: CameraOverlay(),
+                  foregroundPainter:
+                      CameraOverlayAnimator(_animationController!),
                 ),
               )
             : Container(),
@@ -96,6 +111,7 @@ class _CameraSourceState extends State<CameraSource>
   @override
   void dispose() {
     _cameraController?.dispose();
+    _animationController?.dispose();
     super.dispose();
   }
 }
