@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:qr_scanner/src/camera_overlay.dart';
 import 'package:qr_scanner/src/camera_overlay_animator.dart';
 
@@ -14,6 +16,12 @@ class _CameraSourceState extends State<CameraSource>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   CameraController? _cameraController;
   AnimationController? _animationController;
+  late List<CameraDescription> _cameras;
+
+  final BarcodeScanner _barcodeScanner = BarcodeScanner();
+  bool _canProcess = true;
+  bool _isBusy = false;
+  String? _text;
 
   bool _isCameraInitialized = false;
 
@@ -35,11 +43,11 @@ class _CameraSourceState extends State<CameraSource>
   }
 
   void findBackCamera() async {
-    final cameras = await availableCameras();
+    _cameras = await availableCameras();
 
-    print('all available cameras = $cameras');
+    print('all available cameras = $_cameras');
 
-    initializedCamera(cameras[0]);
+    initializedCamera(_cameras[0]);
   }
 
   void initializedCamera(CameraDescription description) {
@@ -53,6 +61,8 @@ class _CameraSourceState extends State<CameraSource>
       if (!mounted) {
         return;
       }
+
+      _cameraController?.startImageStream(_processCameraImage);
 
       setState(() {
         _isCameraInitialized = _cameraController!.value.isInitialized;
@@ -69,6 +79,92 @@ class _CameraSourceState extends State<CameraSource>
         }
       }
     });
+  }
+
+  Future _processCameraImage(CameraImage image) async {
+    final WriteBuffer allBytes = WriteBuffer();
+    for (final Plane plane in image.planes) {
+      allBytes.putUint8List(plane.bytes);
+    }
+    final bytes = allBytes.done().buffer.asUint8List();
+
+    final Size imageSize =
+        Size(image.width.toDouble(), image.height.toDouble());
+
+    final camera = _cameras[0];
+    final imageRotation =
+        InputImageRotationValue.fromRawValue(camera.sensorOrientation);
+    if (imageRotation == null) return;
+
+    final inputImageFormat =
+        InputImageFormatValue.fromRawValue(image.format.raw);
+    if (inputImageFormat == null) return;
+
+    final planeData = image.planes.map(
+      (Plane plane) {
+        return InputImagePlaneMetadata(
+          bytesPerRow: plane.bytesPerRow,
+          height: plane.height,
+          width: plane.width,
+        );
+      },
+    ).toList();
+
+    final inputImageData = InputImageData(
+      size: imageSize,
+      imageRotation: imageRotation,
+      inputImageFormat: inputImageFormat,
+      planeData: planeData,
+    );
+
+    final inputImage =
+        InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
+
+    processImage(inputImage);
+  }
+
+  Future<void> processImage(InputImage inputImage) async {
+    if (!_canProcess) return;
+    if (_isBusy) return;
+    _isBusy = true;
+
+    setState(() {
+      _text = '';
+    });
+    final barcodes = await _barcodeScanner.processImage(inputImage);
+    String text = 'Barcodes found: ${barcodes.length}\n\n';
+
+    if (barcodes.isNotEmpty) {
+      _cameraController?.stopImageStream().then((_) {
+        for (final barcode in barcodes) {
+          text += 'Barcode: ${barcode.rawBytes}\n\n';
+        }
+
+        print("Barcode = $text");
+      });
+    }
+
+    // if (inputImage.inputImageData?.size != null &&
+    //     inputImage.inputImageData?.imageRotation != null) {
+    //   final painter = BarcodeDetectorPainter(
+    //       barcodes,
+    //       inputImage.inputImageData!.size,
+    //       inputImage.inputImageData!.imageRotation);
+    //   _customPaint = CustomPaint(painter: painter);
+    // } else {
+    //   String text = 'Barcodes found: ${barcodes.length}\n\n';
+    //   for (final barcode in barcodes) {
+    //     text += 'Barcode: ${barcode.rawValue}\n\n';
+    //   }
+    //   _text = text;
+    //   // TODO: set _customPaint to draw boundingRect on top of image
+    //   _customPaint = null;
+    // }
+    _isBusy = false;
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -110,6 +206,8 @@ class _CameraSourceState extends State<CameraSource>
 
   @override
   void dispose() {
+    _canProcess = false;
+    _barcodeScanner.close();
     _cameraController?.dispose();
     _animationController?.dispose();
     super.dispose();
