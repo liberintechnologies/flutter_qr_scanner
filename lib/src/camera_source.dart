@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:qr_scanner/src/camera_overlay.dart';
 import 'package:qr_scanner/src/camera_overlay_animator.dart';
+import 'package:qr_scanner/src/camera_view.dart';
 
 class CameraSource extends StatefulWidget {
   const CameraSource({Key? key}) : super(key: key);
@@ -21,12 +22,15 @@ class _CameraSourceState extends State<CameraSource>
   final BarcodeScanner _barcodeScanner = BarcodeScanner();
   bool _canProcess = true;
   bool _isBusy = false;
+  FlashMode _currentFlashMode = FlashMode.off;
+
   String? _text;
 
   bool _isCameraInitialized = false;
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     super.initState();
     _animationController = AnimationController(
       vsync: this,
@@ -205,23 +209,17 @@ class _CameraSourceState extends State<CameraSource>
       backgroundColor: Colors.black,
       body: SafeArea(
         child: _isCameraInitialized
-            ? CameraPreview(
-                _cameraController!,
-                child: CustomPaint(
-                  painter: CameraOverlay(),
-                  foregroundPainter:
-                      CameraOverlayAnimator(_animationController!),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTapDown: (details) {
-                          onViewFinderTap(details, constraints);
-                        },
-                      );
-                    },
-                  ),
-                ),
+            ? CameraView(
+                cameraController: _cameraController!,
+                overlayAnimatorController: _animationController!,
+                onViewFinderTap: onViewFinderTap,
+                flashMode: _currentFlashMode,
+                flashModeChanged: (flashMode) {
+                  _cameraController?.setFlashMode(flashMode);
+                  setState(() {
+                    _currentFlashMode = flashMode;
+                  });
+                },
               )
             : const SizedBox.shrink(),
       ),
@@ -230,6 +228,7 @@ class _CameraSourceState extends State<CameraSource>
 
   @override
   void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _canProcess = false;
     _barcodeScanner.close();
     _cameraController?.dispose();
