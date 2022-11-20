@@ -27,12 +27,11 @@ class _CameraSourceState extends State<CameraSource>
 
   @override
   void initState() {
-    findBackCamera();
     super.initState();
     _animationController = AnimationController(
       vsync: this,
     );
-    _startAnimation();
+    findBackCamera();
   }
 
   void _startAnimation() {
@@ -61,6 +60,8 @@ class _CameraSourceState extends State<CameraSource>
       if (!mounted) {
         return;
       }
+
+      _startAnimation();
 
       _cameraController?.startImageStream(_processCameraImage);
 
@@ -131,6 +132,7 @@ class _CameraSourceState extends State<CameraSource>
     setState(() {
       _text = '';
     });
+
     final barcodes = await _barcodeScanner.processImage(inputImage);
     String text = 'Barcodes found: ${barcodes.length}\n\n';
 
@@ -185,6 +187,18 @@ class _CameraSourceState extends State<CameraSource>
     }
   }
 
+  void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
+    if (_cameraController == null) {
+      return;
+    }
+    final offset = Offset(
+      details.localPosition.dx / constraints.maxWidth,
+      details.localPosition.dy / constraints.maxHeight,
+    );
+    _cameraController!.setExposurePoint(offset);
+    _cameraController!.setFocusPoint(offset);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,9 +211,19 @@ class _CameraSourceState extends State<CameraSource>
                   painter: CameraOverlay(),
                   foregroundPainter:
                       CameraOverlayAnimator(_animationController!),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTapDown: (details) {
+                          onViewFinderTap(details, constraints);
+                        },
+                      );
+                    },
+                  ),
                 ),
               )
-            : Container(),
+            : const SizedBox.shrink(),
       ),
     );
   }
