@@ -2,12 +2,15 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
-import 'package:qr_scanner/src/camera_overlay.dart';
-import 'package:qr_scanner/src/camera_overlay_animator.dart';
 import 'package:qr_scanner/src/camera_view.dart';
 
 class CameraSource extends StatefulWidget {
-  const CameraSource({Key? key}) : super(key: key);
+  const CameraSource({
+    Key? key,
+    required this.onDetect,
+  }) : super(key: key);
+
+  final void Function(Barcode) onDetect;
 
   @override
   State<CameraSource> createState() => _CameraSourceState();
@@ -23,8 +26,6 @@ class _CameraSourceState extends State<CameraSource>
   bool _canProcess = true;
   bool _isBusy = false;
   FlashMode _currentFlashMode = FlashMode.off;
-
-  String? _text;
 
   bool _isCameraInitialized = false;
 
@@ -47,9 +48,6 @@ class _CameraSourceState extends State<CameraSource>
 
   void findBackCamera() async {
     _cameras = await availableCameras();
-
-    print('all available cameras = $_cameras');
-
     initializedCamera(_cameras[0]);
   }
 
@@ -76,10 +74,8 @@ class _CameraSourceState extends State<CameraSource>
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-            print('User denied camera access.');
             break;
           default:
-            print('Handle other errors.');
             break;
         }
       }
@@ -133,39 +129,12 @@ class _CameraSourceState extends State<CameraSource>
     if (_isBusy) return;
     _isBusy = true;
 
-    setState(() {
-      _text = '';
-    });
-
     final barcodes = await _barcodeScanner.processImage(inputImage);
-    String text = 'Barcodes found: ${barcodes.length}\n\n';
 
     if (barcodes.isNotEmpty) {
-      _cameraController?.stopImageStream().then((_) {
-        for (final barcode in barcodes) {
-          text += 'Barcode: ${barcode.rawBytes}\n\n';
-        }
-
-        print("Barcode = $text");
-      });
+      widget.onDetect(barcodes.first);
     }
 
-    // if (inputImage.inputImageData?.size != null &&
-    //     inputImage.inputImageData?.imageRotation != null) {
-    //   final painter = BarcodeDetectorPainter(
-    //       barcodes,
-    //       inputImage.inputImageData!.size,
-    //       inputImage.inputImageData!.imageRotation);
-    //   _customPaint = CustomPaint(painter: painter);
-    // } else {
-    //   String text = 'Barcodes found: ${barcodes.length}\n\n';
-    //   for (final barcode in barcodes) {
-    //     text += 'Barcode: ${barcode.rawValue}\n\n';
-    //   }
-    //   _text = text;
-    //   // TODO: set _customPaint to draw boundingRect on top of image
-    //   _customPaint = null;
-    // }
     _isBusy = false;
 
     if (mounted) {

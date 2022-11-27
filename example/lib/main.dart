@@ -56,7 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() async {
     if (await Permission.camera.request().isGranted) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return const CameraSource();
+        return CameraSource(
+          onDetect: (p0) {
+            print("barcode detected: ${p0.rawBytes}");
+          },
+        );
       }));
     }
   }
