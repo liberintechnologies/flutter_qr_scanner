@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onDetect: (p0) {
             print("barcode detected: ${p0.rawBytes}");
           },
+          stopOnFound: true,
         );
       }));
     }

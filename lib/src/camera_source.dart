@@ -8,9 +8,13 @@ class CameraSource extends StatefulWidget {
   const CameraSource({
     Key? key,
     required this.onDetect,
+    this.stopOnFound = false,
+    this.resolution = ResolutionPreset.high,
   }) : super(key: key);
 
   final void Function(Barcode) onDetect;
+  final bool stopOnFound;
+  final ResolutionPreset resolution;
 
   @override
   State<CameraSource> createState() => _CameraSourceState();
@@ -54,7 +58,7 @@ class _CameraSourceState extends State<CameraSource>
   void initializedCamera(CameraDescription description) {
     _cameraController = CameraController(
       description,
-      ResolutionPreset.max,
+      widget.resolution,
       enableAudio: false,
     );
 
@@ -132,7 +136,13 @@ class _CameraSourceState extends State<CameraSource>
     final barcodes = await _barcodeScanner.processImage(inputImage);
 
     if (barcodes.isNotEmpty) {
-      widget.onDetect(barcodes.first);
+      if (widget.stopOnFound) {
+        _cameraController?.stopImageStream().then((_) async {
+          widget.onDetect(barcodes.first);
+        });
+      } else {
+        widget.onDetect(barcodes.first);
+      }
     }
 
     _isBusy = false;
