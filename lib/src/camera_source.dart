@@ -10,11 +10,13 @@ class CameraSource extends StatefulWidget {
     required this.onDetect,
     this.stopOnFound = false,
     this.resolution = ResolutionPreset.high,
+    this.immersive = true,
   }) : super(key: key);
 
   final void Function(Barcode) onDetect;
   final bool stopOnFound;
   final ResolutionPreset resolution;
+  final bool immersive;
 
   @override
   State<CameraSource> createState() => _CameraSourceState();
@@ -35,7 +37,10 @@ class _CameraSourceState extends State<CameraSource>
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    if (widget.immersive) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    }
+
     super.initState();
     _animationController = AnimationController(
       vsync: this,
@@ -207,7 +212,9 @@ class _CameraSourceState extends State<CameraSource>
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    if (widget.immersive) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
     _canProcess = false;
     _barcodeScanner.close();
     _cameraController?.dispose();

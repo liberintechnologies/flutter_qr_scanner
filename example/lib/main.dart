@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             print("barcode detected: ${p0.rawBytes}");
           },
           stopOnFound: true,
+          immersive: false,
         );
       }));
     }
