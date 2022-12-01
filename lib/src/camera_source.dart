@@ -155,14 +155,12 @@ class _CameraSourceState extends State<CameraSource>
           setState(() {
             frameCount = 0;
           });
-          Navigator.pop(context);
         });
       } else {
         widget.onDetect(barcodes.first);
         setState(() {
           frameCount = 0;
         });
-        Navigator.pop(context);
       }
     }
 
