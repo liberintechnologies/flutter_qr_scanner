@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/qr_scanner.dart';
 
@@ -112,7 +113,22 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              maintainState: false,
+              builder: (context) {
+                return CameraSource(
+                  immersive: false,
+                  stopOnFound: true,
+                  onDetect: (barcode) async {
+                    Fluttertoast.showToast(msg: "barcode: ${barcode.format}");
+                  },
+                );
+              },
+            ),
+          );
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
