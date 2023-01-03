@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:qr_scanner/qr_scanner.dart';
+import 'package:flutter_qr_scanner/flutter_qr_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
