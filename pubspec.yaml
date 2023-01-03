@@ -1,6 +1,6 @@
 name: quick_qr
 description: A flutter plugin for scanning qr code in Android & iOS.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/liberintechnologies/flutter_qr_scanner
 
 environment:
