@@ -2,8 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_qr_scanner/src/camera_view.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
+import 'package:quick_qr/src/camera_view.dart';
 
 class CameraSource extends StatefulWidget {
   const CameraSource({
