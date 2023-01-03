@@ -1,4 +1,4 @@
-name: flutter_qr_scanner
+name: qr_scanner
 description: A flutter plugin for scanning qr code in Android & iOS.
 version: 1.0.0
 homepage: https://github.com/liberintechnologies/qr_scanner
