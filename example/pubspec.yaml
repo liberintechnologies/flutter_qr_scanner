@@ -31,7 +31,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  qr_scanner:
+  flutter_qr_scanner:
     path: ../.
   permission_handler: ^10.2.0
 

@@ -1,8 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_scanner/src/camera_overlay.dart';
-import 'package:qr_scanner/src/camera_overlay_animator.dart';
+import 'package:flutter_qr_scanner/src/camera_overlay.dart';
+import 'package:flutter_qr_scanner/src/camera_overlay_animator.dart';
 
 class CameraView extends StatelessWidget {
   const CameraView({
