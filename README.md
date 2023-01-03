@@ -13,7 +13,7 @@ CameraSource class’s required and optional parameters and functions.
 ## Usage
 
 ```dart
-import 'package:qr_scanner/qr_scanner.dart';
+import 'package:quick_qr/quick_qr.dart';
 
 Navigator.of(context).push(
               MaterialPageRoute(
