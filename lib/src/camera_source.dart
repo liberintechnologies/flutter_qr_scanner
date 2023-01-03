@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
@@ -34,6 +35,7 @@ class _CameraSourceState extends State<CameraSource>
   FlashMode _currentFlashMode = FlashMode.off;
 
   bool _isCameraInitialized = false;
+  int frameCount = 0;
 
   @override
   void initState() {
@@ -92,45 +94,52 @@ class _CameraSourceState extends State<CameraSource>
   }
 
   Future _processCameraImage(CameraImage image) async {
-    final WriteBuffer allBytes = WriteBuffer();
-    for (final Plane plane in image.planes) {
-      allBytes.putUint8List(plane.bytes);
+    setState(() {
+      frameCount++;
+    });
+    if (frameCount == 1) {
+      //skip
+    } else {
+      final WriteBuffer allBytes = WriteBuffer();
+      for (final Plane plane in image.planes) {
+        allBytes.putUint8List(plane.bytes);
+      }
+      final bytes = allBytes.done().buffer.asUint8List();
+
+      final Size imageSize =
+          Size(image.width.toDouble(), image.height.toDouble());
+
+      final camera = _cameras[0];
+      final imageRotation =
+          InputImageRotationValue.fromRawValue(camera.sensorOrientation);
+      if (imageRotation == null) return;
+
+      final inputImageFormat =
+          InputImageFormatValue.fromRawValue(image.format.raw);
+      if (inputImageFormat == null) return;
+
+      final planeData = image.planes.map(
+        (Plane plane) {
+          return InputImagePlaneMetadata(
+            bytesPerRow: plane.bytesPerRow,
+            height: plane.height,
+            width: plane.width,
+          );
+        },
+      ).toList();
+
+      final inputImageData = InputImageData(
+        size: imageSize,
+        imageRotation: imageRotation,
+        inputImageFormat: inputImageFormat,
+        planeData: planeData,
+      );
+
+      final inputImage =
+          InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
+
+      processImage(inputImage);
     }
-    final bytes = allBytes.done().buffer.asUint8List();
-
-    final Size imageSize =
-        Size(image.width.toDouble(), image.height.toDouble());
-
-    final camera = _cameras[0];
-    final imageRotation =
-        InputImageRotationValue.fromRawValue(camera.sensorOrientation);
-    if (imageRotation == null) return;
-
-    final inputImageFormat =
-        InputImageFormatValue.fromRawValue(image.format.raw);
-    if (inputImageFormat == null) return;
-
-    final planeData = image.planes.map(
-      (Plane plane) {
-        return InputImagePlaneMetadata(
-          bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
-        );
-      },
-    ).toList();
-
-    final inputImageData = InputImageData(
-      size: imageSize,
-      imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat,
-      planeData: planeData,
-    );
-
-    final inputImage =
-        InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
-
-    processImage(inputImage);
   }
 
   Future<void> processImage(InputImage inputImage) async {
@@ -144,9 +153,15 @@ class _CameraSourceState extends State<CameraSource>
       if (widget.stopOnFound) {
         _cameraController?.stopImageStream().then((_) async {
           widget.onDetect(barcodes.first);
+          setState(() {
+            frameCount = 0;
+          });
         });
       } else {
         widget.onDetect(barcodes.first);
+        setState(() {
+          frameCount = 0;
+        });
       }
     }
 

@@ -1,8 +1,8 @@
 # This is a generated file; do not edit or check into version control.
-camera=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.10.0+4/
-camera_android=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/camera_android-0.10.0+4/
-camera_avfoundation=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/camera_avfoundation-0.9.8+6/
-camera_web=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/camera_web-0.3.0+1/
-flutter_plugin_android_lifecycle=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-2.0.7/
-google_mlkit_barcode_scanning=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_barcode_scanning-0.5.0/
-google_mlkit_commons=/home/prakhar/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_commons-0.2.0/
+camera=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.10.1/
+camera_android=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_android-0.10.2/
+camera_avfoundation=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_avfoundation-0.9.10/
+camera_web=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_web-0.3.1/
+flutter_plugin_android_lifecycle=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-2.0.7/
+google_mlkit_barcode_scanning=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_barcode_scanning-0.5.0/
+google_mlkit_commons=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_commons-0.2.0/
