@@ -1,3 +1,6 @@
+import 'package:example/history/history_page.dart';
+import 'package:example/history/model.dart';
+import 'package:example/history/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -38,11 +41,35 @@ class _MyHomePageState extends State<MyHomePage> {
   String _qrCodeData = "";
   String? _qrCodeFormat;
 
+  late SharedPrefs sharedPref = SharedPrefs();
+
+  @override
+  void initState() {
+    super.initState();
+    initializeSharedPrefs();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return HistoryPage(
+                    sharedPrefs: sharedPref,
+                  );
+                },
+              ));
+            },
+            icon: const Icon(
+              Icons.history_sharp,
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -115,6 +142,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           _qrCodeFormat = barcode.format.name;
                         });
                       }
+                      final barcodeData = BarcodeModel(
+                        barcode.displayValue!,
+                        barcode.format.name,
+                        barcode.type.name,
+                      );
+
+                      sharedPref.setBarcodeData(
+                          DateTime.now().millisecondsSinceEpoch.toString(),
+                          barcodeData.toJson());
 
                       Navigator.pop(context);
                     },
@@ -127,5 +163,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: const Icon(Icons
               .qr_code)), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void initializeSharedPrefs() async {
+    await sharedPref.init();
   }
 }
