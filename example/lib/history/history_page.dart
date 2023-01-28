@@ -136,9 +136,8 @@ class _HistoryPageState extends State<HistoryPage> {
                                         text: list[index].displayValue,
                                         onOpen: (link) async {
                                           String url = link.url;
-                                          final uri = Uri.parse(url);
-                                          if (await canLaunchUrl(uri)) {
-                                            await launchUrl(uri);
+                                          if (await canLaunch(url)) {
+                                            await launch(url);
                                           } else {
                                             Fluttertoast.showToast(
                                                 msg: "Could not launch url");
