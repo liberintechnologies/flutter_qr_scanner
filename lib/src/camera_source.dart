@@ -78,9 +78,11 @@ class _CameraSourceState extends State<CameraSource>
 
       _cameraController?.startImageStream(_processCameraImage);
 
-      setState(() {
-        _isCameraInitialized = _cameraController!.value.isInitialized;
-      });
+      if (mounted) {
+        setState(() {
+          _isCameraInitialized = _cameraController!.value.isInitialized;
+        });
+      }
     }).catchError((e) {
       if (e is CameraException) {
         switch (e.code) {
@@ -94,9 +96,11 @@ class _CameraSourceState extends State<CameraSource>
   }
 
   Future _processCameraImage(CameraImage image) async {
-    setState(() {
-      frameCount++;
-    });
+    if (mounted) {
+      setState(() {
+        frameCount++;
+      });
+    }
     if (frameCount == 1) {
       //skip
     } else {
@@ -153,15 +157,19 @@ class _CameraSourceState extends State<CameraSource>
       if (widget.stopOnFound) {
         _cameraController?.stopImageStream().then((_) async {
           widget.onDetect(barcodes.first);
-          setState(() {
-            frameCount = 0;
-          });
+          if (mounted) {
+            setState(() {
+              frameCount = 0;
+            });
+          }
         });
       } else {
         widget.onDetect(barcodes.first);
-        setState(() {
-          frameCount = 0;
-        });
+        if (mounted) {
+          setState(() {
+            frameCount = 0;
+          });
+        }
       }
     }
 
@@ -215,9 +223,11 @@ class _CameraSourceState extends State<CameraSource>
                 flashMode: _currentFlashMode,
                 flashModeChanged: (flashMode) {
                   _cameraController?.setFlashMode(flashMode);
-                  setState(() {
-                    _currentFlashMode = flashMode;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _currentFlashMode = flashMode;
+                    });
+                  }
                 },
               )
             : const SizedBox.shrink(),

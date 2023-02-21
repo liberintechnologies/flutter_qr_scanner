@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:quick_qr/src/camera_overlay.dart';
 import 'package:quick_qr/src/camera_overlay_animator.dart';
+import 'package:quick_qr/src/gallery_source.dart';
 
 class CameraView extends StatelessWidget {
   const CameraView({
@@ -148,6 +149,15 @@ class _CameraControls extends StatelessWidget {
             },
           ),
         ),
+        Positioned(
+            right: 0,
+            left: 0,
+            top: 0,
+            child: GallerySource(
+              onDetect: (barcode) {
+                Navigator.pop(context, barcode);
+              },
+            ))
       ],
     );
   }

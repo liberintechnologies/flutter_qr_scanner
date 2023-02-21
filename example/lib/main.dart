@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             if (mounted) {
               setState(() {
                 _qrCodeData = "";
@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             }
 
-            Navigator.of(context).push(
+            final result = await Navigator.of(context).push(
               MaterialPageRoute(
                 maintainState: false,
                 builder: (context) {
@@ -157,6 +157,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             );
+            //if the image source is gallery
+            if (result != null) {
+              final barcode = result as Barcode;
+              if (mounted) {
+                setState(() {
+                  _qrCodeData = barcode.displayValue!;
+                  _qrCodeFormat = barcode.format.name;
+                });
+              }
+              final barcodeData = BarcodeModel(
+                barcode.displayValue!,
+                barcode.format.name,
+                barcode.type.name,
+              );
+
+              sharedPref.setBarcodeData(
+                  DateTime.now().millisecondsSinceEpoch.toString(),
+                  barcodeData.toJson());
+            }
+
+            // final dat = result as Barcode;
+
+            // print("result : ${dat.displayValue}");
           },
           tooltip: 'Open QrCode scanner',
           child: const Icon(Icons

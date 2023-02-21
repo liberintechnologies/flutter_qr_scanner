@@ -1,8 +1,13 @@
 # This is a generated file; do not edit or check into version control.
-camera=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.10.1/
-camera_android=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_android-0.10.2/
-camera_avfoundation=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_avfoundation-0.9.10/
-camera_web=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/camera_web-0.3.1/
-flutter_plugin_android_lifecycle=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-2.0.7/
-google_mlkit_barcode_scanning=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_barcode_scanning-0.5.0/
-google_mlkit_commons=/Users/arvind/Downloads/flutter/.pub-cache/hosted/pub.dartlang.org/google_mlkit_commons-0.2.0/
+camera=/Users/arvind/.pub-cache/hosted/pub.dev/camera-0.10.3/
+camera_android=/Users/arvind/.pub-cache/hosted/pub.dev/camera_android-0.10.4/
+camera_avfoundation=/Users/arvind/.pub-cache/hosted/pub.dev/camera_avfoundation-0.9.11/
+camera_web=/Users/arvind/.pub-cache/hosted/pub.dev/camera_web-0.3.1+1/
+flutter_plugin_android_lifecycle=/Users/arvind/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.7/
+fluttertoast=/Users/arvind/.pub-cache/hosted/pub.dev/fluttertoast-8.2.1/
+google_mlkit_barcode_scanning=/Users/arvind/.pub-cache/hosted/pub.dev/google_mlkit_barcode_scanning-0.5.0/
+google_mlkit_commons=/Users/arvind/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.2.0/
+image_picker=/Users/arvind/.pub-cache/hosted/pub.dev/image_picker-0.8.6+2/
+image_picker_android=/Users/arvind/.pub-cache/hosted/pub.dev/image_picker_android-0.8.5+6/
+image_picker_for_web=/Users/arvind/.pub-cache/hosted/pub.dev/image_picker_for_web-2.1.10/
+image_picker_ios=/Users/arvind/.pub-cache/hosted/pub.dev/image_picker_ios-0.8.6+8/
